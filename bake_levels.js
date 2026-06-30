@@ -91,22 +91,22 @@ const LEVELS = [
   {id:10012,wordCount:32,colCount:4,qmarkCount:6},
   {id:10013,wordCount:36,colCount:4,qmarkCount:7},
   {id:10014,wordCount:44,colCount:5,qmarkCount:9},
-  {id:10015,wordCount:48,colCount:5,qmarkCount:11},
+  {id:10015,wordCount:44,colCount:5,qmarkCount:10},
   {id:10016,wordCount:32,colCount:4,qmarkCount:7},
   {id:10017,wordCount:36,colCount:4,qmarkCount:9},
   {id:10018,wordCount:44,colCount:5,qmarkCount:8},
-  {id:10019,wordCount:48,colCount:5,qmarkCount:12},
+  {id:10019,wordCount:44,colCount:5,qmarkCount:11},
   {id:10020,wordCount:32,colCount:4,qmarkCount:6},
   {id:10021,wordCount:36,colCount:4,qmarkCount:9},
   {id:10022,wordCount:44,colCount:5,qmarkCount:8},
-  {id:10023,wordCount:48,colCount:5,qmarkCount:12},
+  {id:10023,wordCount:44,colCount:5,qmarkCount:11},
   {id:10024,wordCount:32,colCount:4,qmarkCount:6},
   {id:10025,wordCount:36,colCount:4,qmarkCount:9},
   {id:10026,wordCount:44,colCount:5,qmarkCount:8},
-  {id:10027,wordCount:48,colCount:5,qmarkCount:12},
-  {id:10028,wordCount:32,colCount:4,qmarkCount:6},
-  {id:10029,wordCount:36,colCount:4,qmarkCount:9},
-  {id:10030,wordCount:44,colCount:5,qmarkCount:8}
+  {id:10027,wordCount:44,colCount:5,qmarkCount:11},
+  {id:10028,wordCount:32,colCount:4,qmarkCount:7},
+  {id:10029,wordCount:36,colCount:4,qmarkCount:10},
+  {id:10030,wordCount:44,colCount:5,qmarkCount:13}
 ];
 
 const TYPE_COLORS = [
@@ -208,9 +208,9 @@ function tryGenerate(levelConfig) {
 function checkSolvable(genData, wordCount) {
   const {columns, qmarkPositions} = genData;
 
-  const maxNodes = wordCount <= 32 ? 100000 : 1000000;
+  const maxNodes = wordCount <= 24 ? 100000 : (wordCount <= 32 ? 500000 : (wordCount <= 40 ? 2000000 : 3000000));
   const startTime = Date.now();
-  const timeLimit = wordCount <= 36 ? 3000 : (wordCount <= 44 ? 8000 : 15000);
+  const timeLimit = wordCount <= 28 ? 3000 : (wordCount <= 36 ? 8000 : (wordCount <= 40 ? 15000 : 25000));
 
   const cols = columns.map(col => col.map(w => ({wordId:w.wordId, typeId:w.typeId})));
   const storage = [null, null, null];
@@ -397,7 +397,7 @@ function checkSolvable(genData, wordCount) {
 function generateLevel(levelConfig) {
   let result = null;
   let attempts = 0;
-  const maxAttempts = 200;
+  const maxAttempts = levelConfig.wordCount >= 40 ? 30 : 200;
 
   while (!result && attempts < maxAttempts) {
     attempts++;
