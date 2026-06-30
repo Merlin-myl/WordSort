@@ -1,0 +1,19 @@
+# Word Sort - .gitignore
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+.svn
+Temp
+UserSettings
+.idea
+Library
+Library_back
+Logs
+obj
+*.csproj
+*.sln
+packages-lock.json
+.vs
+.vsconfig
