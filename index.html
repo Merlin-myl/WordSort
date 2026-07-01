@@ -1151,6 +1151,24 @@ function markQMarkWords(columns, qmarkPositions) {
 // 六、UI渲染
 // ============================================================
 
+// ===== 触摸滑动与点击区分 =====
+let _touchStartX = 0, _touchStartY = 0, _touchMoved = false;
+document.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 0) return;
+  _touchStartX = e.touches[0].clientX;
+  _touchStartY = e.touches[0].clientY;
+  _touchMoved = false;
+}, {passive: true});
+document.addEventListener('touchmove', (e) => {
+  if (!_touchMoved && e.touches.length > 0) {
+    const dx = e.touches[0].clientX - _touchStartX;
+    const dy = e.touches[0].clientY - _touchStartY;
+    if (Math.abs(dx) > 8 || Math.abs(dy) > 8) _touchMoved = true;
+  }
+}, {passive: true});
+// 鼠标操作不受触摸标记影响
+document.addEventListener('mousedown', () => { _touchMoved = false; });
+
 // 渲染选关界面
 function renderLevelSelect() {
   const grid = document.getElementById('level-grid');
@@ -1159,9 +1177,8 @@ function renderLevelSelect() {
     const btn = document.createElement('div');
     btn.className = 'level-btn';
     btn.textContent = (index + 1);
-    btn.addEventListener('click', () => startLevel(index));
-    btn.addEventListener('touchend', (e) => {
-      e.preventDefault();
+    btn.addEventListener('click', () => {
+      if (_touchMoved) { _touchMoved = false; return; }
       startLevel(index);
     });
     grid.appendChild(btn);
@@ -1253,9 +1270,8 @@ function renderCategoryBoxes() {
     if (i >= G.unlockedCatBoxes) {
       // 锁定的分类框
       box.classList.add('locked');
-      box.addEventListener('click', () => unlockCatBox());
-      box.addEventListener('touchend', (e) => {
-        e.preventDefault();
+      box.addEventListener('click', () => {
+        if (_touchMoved) { _touchMoved = false; return; }
         unlockCatBox();
       });
     } else {
@@ -1320,9 +1336,8 @@ function renderStorage() {
 
     if (i >= G.unlockedStorage) {
       slot.classList.add('locked');
-      slot.addEventListener('click', () => unlockStorage());
-      slot.addEventListener('touchend', (e) => {
-        e.preventDefault();
+      slot.addEventListener('click', () => {
+        if (_touchMoved) { _touchMoved = false; return; }
         unlockStorage();
       });
     } else if (G.storage[i] !== null) {
